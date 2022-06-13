@@ -1,0 +1,65 @@
+name: 'Kubernetes Helm Multi-Deploy'
+description: "Deploys all helm chart folders inside a 'deployment' folder in the project root."
+
+inputs:
+  image-tag:
+    description: "The image tag to use in the deployments."
+    required: true
+  environment-slug:
+    description: "Short name of deployment environment. Should be like 'dev', 'prod'. Set this if you have a values-<env>.yaml."
+    required: false
+  k8s-namespace:
+    description: "Deployment namespace in kubernetes. Defaults to <environment-slug>."
+    required: false
+  dry-run:
+    description: "Skip the actual deployment and just show a diff."
+    required: false
+    default: false
+
+runs:
+  using: 'composite'
+
+  steps:
+    - uses: ./.github/actions/setup-env
+    - shell: bash
+      run: |
+        # Setup
+        cd deployment
+
+        # Convert inputs to bash vars
+        INPUT_ENVIRONMENT_SLUG=${{ inputs.environment-slug }}
+        INPUT_K8S_NAMESPACE=${{ inputs.k8s-namespace }}
+
+        # Use k8s-namespace if it's supplied, otherwise use environment-slug as namespace
+        K8S_NAMESPACE=${INPUT_K8S_NAMESPACE:-$INPUT_ENVIRONMENT_SLUG}
+
+        # Creating namespace if necessary
+        kubectl create namespace $K8S_NAMESPACE || true
+
+        # Setup our helm args (TODO OPTIONAL NOT SET IF EXTERNAL DOCKER IMAGE)
+        export HELM_EXTRA_ARGS="$HELM_EXTRA_ARGS --set image.tag=${{ inputs.image-tag }} --set global.image.tag=${{ inputs.image-tag }} --set global.namespace=$K8S_NAMESPACE";
+
+        # Iterate through all our deployments
+        for CURRENT_HELM_CHART in $(ls -d */ | grep -Evi "helm_value_files|templates" | tr '/' ' '); do
+
+          echo "Update our helm chart dependencies"
+          helm dependency update $CURRENT_HELM_CHART || true
+
+          # Discover values files
+          VALUES_ENV_FILE=`find $CURRENT_HELM_CHART -name values-${INPUT_ENVIRONMENT_SLUG}.yaml`
+          VALUES_FILE_ARGS="-f $CURRENT_HELM_CHART/values.yaml${VALUES_FILE:+ -f $VALUES_ENV_FILE}"
+
+
+
+          echo "--- HELM DIFF ---"
+          helm diff upgrade --allow-unreleased --namespace $K8S_NAMESPACE $HELM_UPDIFF_EXTRA_ARGS $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
+            $VALUES_FILE_ARGS \
+            $HELM_EXTRA_ARGS
+
+          if [ "${{ inputs.dry-run  }}" == "false" ]; then
+            echo "--- HELM UPGRADE ---"
+            helm upgrade --install --atomic --namespace $K8S_NAMESPACE $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
+              $VALUES_FILE_ARGS \
+              $HELM_EXTRA_ARGS;
+          fi
+        done
