@@ -47,7 +47,7 @@ runs:
 
           # Discover values files
           VALUES_ENV_FILE=`find $CURRENT_HELM_CHART -name values-${INPUT_ENVIRONMENT_SLUG}.yaml`
-          VALUES_FILE_ARGS="-f $CURRENT_HELM_CHART/values.yaml${VALUES_FILE:+ -f $VALUES_ENV_FILE}"
+          VALUES_FILE_ARGS="-f $CURRENT_HELM_CHART/values.yaml${VALUES_ENV_FILE:+ -f $VALUES_ENV_FILE}"
 
 
 
