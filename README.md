@@ -2,14 +2,29 @@
 
 This action will deploy all Helm chart folders inside a 'deployment' folder in your repository root. For example:
 
-- My-Awesome-Project
-  - deployment
-    - helm-chart-1
-    - helm-chart-2
-    - ...
-  - src
-  - README.md
+```
+my-awesome-app/
+├── README.md
+├── deployment
+│   ├── my-deployment-1
+│   │   ├── Chart.yaml
+│   │   ├── values-dev.yaml
+│   │   ├── values-prod.yaml
+│   │   └── values.yaml
+│   └── my-deployment-2
+│       ├── Chart.yaml
+│       ├── values-dev.yaml
+│       ├── values-prod.yaml
+│       └── values.yaml
+└── src
+    └── etc
+```
 
+For the above file system, this action will deploy `my-deployment-1`, `my-deployment-2`, and any other charts under the deployment folder.
+
+If you define the input `environment-slug`, then `values-<env>.yaml` will be applied **on top of** your `values.yml`. This is to provide the option of having different settings per environment.
+
+## Inputs
 
 | **Input**        | **Required** | **Default**                 | **Description**                                                                                        |
 |------------------|--------------|-----------------------------|--------------------------------------------------------------------------------------------------------|
