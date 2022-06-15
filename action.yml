@@ -22,7 +22,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - /bin/sh -c 'helm list'
+    - /bin/sh -c helm list
 
   # using: 'composite'
 
