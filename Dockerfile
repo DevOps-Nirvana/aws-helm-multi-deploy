@@ -49,3 +49,5 @@ RUN  apt update -y \
   # Pre-setup kubectl to work from within the cluster, without this helm and kubectx/kubens freaks out about "no contexts defined"
   && kubectl config set-context local-kubernetes-cluster \
   && kubectl config use-context local-kubernetes-cluster
+
+COPY /var/run/secrets/eks.amazonaws.com/serviceaccount/token /var/run/secrets/eks.amazonaws.com/serviceaccount/token

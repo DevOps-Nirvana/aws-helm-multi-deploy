@@ -21,6 +21,9 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  env:
+    AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
+    AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}
   args:
     - /bin/sh
     - -c
