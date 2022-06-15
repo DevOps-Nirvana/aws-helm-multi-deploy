@@ -19,41 +19,47 @@ inputs:
     default: false
 
 runs:
-  using: 'composite'
+  shell: bash
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - /bin/sh -c 'helm list'
 
-  steps:
-    - shell: bash
-      run: |
-        # Setup
-        cd deployment
+  # using: 'composite'
 
-        # Creating namespace if necessary
-        kubectl create namespace ${{ inputs.k8s-namespace }} || true
-
-        # Setup our helm args (TODO OPTIONAL NOT SET IF EXTERNAL DOCKER IMAGE)
-        export HELM_EXTRA_ARGS="$HELM_EXTRA_ARGS --set image.tag=${{ inputs.image-tag }} --set global.image.tag=${{ inputs.image-tag }} --set global.namespace=${{ inputs.k8s-namespace }}";
-
-        # Iterate through all our deployments
-        for CURRENT_HELM_CHART in $(ls -d */ | grep -Evi "helm_value_files|templates" | tr '/' ' '); do
-
-          echo "Update our helm chart dependencies"
-          helm dependency update $CURRENT_HELM_CHART || true
-
-          # Discover values files
-          VALUES_ENV_FILE=`find $CURRENT_HELM_CHART -name values-${INPUT_ENVIRONMENT_SLUG}.yaml`
-          VALUES_FILE_ARGS="-f $CURRENT_HELM_CHART/values.yaml${VALUES_ENV_FILE:+ -f $VALUES_ENV_FILE}"
-
-
-
-          echo "--- HELM DIFF ---"
-          helm diff upgrade --allow-unreleased --namespace ${{ inputs.k8s-namespace }} $HELM_UPDIFF_EXTRA_ARGS $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
-            $VALUES_FILE_ARGS \
-            $HELM_EXTRA_ARGS
-
-          if [ "${{ inputs.dry-run  }}" == "false" ]; then
-            echo "--- HELM UPGRADE ---"
-            helm upgrade --install --atomic --namespace ${{ inputs.k8s-namespace }} $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
-              $VALUES_FILE_ARGS \
-              $HELM_EXTRA_ARGS;
-          fi
-        done
+  # steps:
+  #   - shell: bash
+  #     run: |
+  #       # Setup
+  #       cd deployment
+  #
+  #       # Creating namespace if necessary
+  #       kubectl create namespace ${{ inputs.k8s-namespace }} || true
+  #
+  #       # Setup our helm args (TODO OPTIONAL NOT SET IF EXTERNAL DOCKER IMAGE)
+  #       export HELM_EXTRA_ARGS="$HELM_EXTRA_ARGS --set image.tag=${{ inputs.image-tag }} --set global.image.tag=${{ inputs.image-tag }} --set global.namespace=${{ inputs.k8s-namespace }}";
+  #
+  #       # Iterate through all our deployments
+  #       for CURRENT_HELM_CHART in $(ls -d */ | grep -Evi "helm_value_files|templates" | tr '/' ' '); do
+  #
+  #         echo "Update our helm chart dependencies"
+  #         helm dependency update $CURRENT_HELM_CHART || true
+  #
+  #         # Discover values files
+  #         VALUES_ENV_FILE=`find $CURRENT_HELM_CHART -name values-${INPUT_ENVIRONMENT_SLUG}.yaml`
+  #         VALUES_FILE_ARGS="-f $CURRENT_HELM_CHART/values.yaml${VALUES_ENV_FILE:+ -f $VALUES_ENV_FILE}"
+  #
+  #
+  #
+  #         echo "--- HELM DIFF ---"
+  #         helm diff upgrade --allow-unreleased --namespace ${{ inputs.k8s-namespace }} $HELM_UPDIFF_EXTRA_ARGS $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
+  #           $VALUES_FILE_ARGS \
+  #           $HELM_EXTRA_ARGS
+  #
+  #         if [ "${{ inputs.dry-run  }}" == "false" ]; then
+  #           echo "--- HELM UPGRADE ---"
+  #           helm upgrade --install --atomic --namespace ${{ inputs.k8s-namespace }} $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
+  #             $VALUES_FILE_ARGS \
+  #             $HELM_EXTRA_ARGS;
+  #         fi
+  #       done
