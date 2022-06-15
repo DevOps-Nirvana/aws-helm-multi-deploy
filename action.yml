@@ -19,7 +19,6 @@ inputs:
     default: false
 
 runs:
-  shell: bash
   using: 'docker'
   image: 'Dockerfile'
   args:
