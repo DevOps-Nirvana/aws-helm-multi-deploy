@@ -1,4 +1,5 @@
 #!/bin/sh
+env
 echo "\n\n--- running update-kubeconfig ---"
 aws eks --region ${AWS_REGION} update-kubeconfig --name ${CLUSTER_NAME}
 
