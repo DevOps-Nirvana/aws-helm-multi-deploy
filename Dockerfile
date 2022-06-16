@@ -4,6 +4,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG HELM_VERSION=3.3.0
 ARG HELMFILE_VERSION=0.119.1
 
+ENV HELM_DATA_HOME=/usr/local/share/helm
+
 # Install everything under a single run to minimize disk space of final image
 RUN  apt update -y \
   && apt install -y \
