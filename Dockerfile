@@ -24,13 +24,15 @@ RUN  apt update -y \
   # Remove go
   && curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz > /tmp/helm-v${HELM_VERSION}-linux-amd64.tar.gz \
   && cd /tmp && tar --strip-components=1 -xf helm-v${HELM_VERSION}-linux-amd64.tar.gz && chmod a+x helm && mv helm /usr/local/bin/ && helm version \
-  && apt-get install -y golang \
-  && helm plugin install https://github.com/hypnoglow/helm-s3.git --version master \
+  && apt-get install -y golang
+  USER runner
+  RUN helm plugin install https://github.com/hypnoglow/helm-s3.git --version master \
   && helm plugin install https://github.com/databus23/helm-diff --version master \
   && find ~/.local/share/helm/plugins/helm-s3.git/. -maxdepth 1 -not -name "bin" -not -name "plugin.yaml" -not -name "." -not -name ".." -exec rm -Rf {} \; \
   && find ~/.local/share/helm/plugins/helm-diff/. -maxdepth 1 -not -name "bin" -not -name "plugin.yaml" -not -name "." -not -name ".." -exec rm -Rf {} \; \
-  && helm s3 --help && helm diff --help \
-  && apt-get remove golang -y \
+  && helm s3 --help && helm diff --help
+  USER root
+  RUN apt-get remove golang -y \
   && curl -sL -o /usr/local/bin/helmfile https://github.com/roboll/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_linux_amd64 \
   && chmod a+x /usr/local/bin/helmfile \
 
