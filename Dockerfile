@@ -50,4 +50,7 @@ RUN  apt update -y \
   && kubectl config set-context local-kubernetes-cluster \
   && kubectl config use-context local-kubernetes-cluster
 
-COPY /var/run/secrets/eks.amazonaws.com/serviceaccount/token /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

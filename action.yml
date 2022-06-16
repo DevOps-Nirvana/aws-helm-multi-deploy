@@ -4,6 +4,15 @@ icon: play
 color: green
 
 inputs:
+  aws-access-key-id:
+    required: true
+  aws-secret-access-key:
+    required: true
+  aws-region:
+    required: false
+    default: us-east-1
+  cluster-name:
+    required: true
   image-tag:
     description: "The image tag to use in the deployments."
     required: true
@@ -22,12 +31,11 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
-    AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}
-  args:
-    - /bin/sh
-    - -c
-    - helm list
+    CLUSTER_NAME: ${{ inputs.cluster-name }}
+    AWS_REGION: ${{ inputs.aws-region }}
+    AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+    AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+    AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
 
   # using: 'composite'
 
