@@ -15,5 +15,6 @@ RUN curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 >
   ./get_helm.sh
 RUN helm plugin install https://github.com/databus23/helm-diff
 
+
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
