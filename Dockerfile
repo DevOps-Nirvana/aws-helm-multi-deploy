@@ -4,7 +4,7 @@ ENV HELM_DATA_HOME=/usr/local/share/helm
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories
 
-RUN apk add --no-cache bash openssl git curl aws-cli helm
+RUN apk add --no-cache bash openssl git curl helm
 
 # Install kubectl
 RUN curl -sL -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
