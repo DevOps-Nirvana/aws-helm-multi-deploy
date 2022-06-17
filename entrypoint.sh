@@ -29,7 +29,7 @@ for CURRENT_HELM_CHART in $(ls -d */ | grep -Evi "helm_value_files|templates" | 
     $VALUES_FILE_ARGS \
     $HELM_EXTRA_ARGS
 
-  if [ "$HELM_DRY_RUN" == "false" ]; then
+  if [ "$HELM_DRY_RUN" = "false" ]; then
     echo "\n\n--- HELM UPGRADE ---\n"
     helm upgrade --install --atomic --namespace $HELM_K8S_NAMESPACE $CURRENT_HELM_CHART ./$CURRENT_HELM_CHART \
       $VALUES_FILE_ARGS \
