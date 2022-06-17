@@ -16,6 +16,14 @@ RUN curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 >
   ./get_helm.sh
 RUN helm plugin install https://github.com/databus23/helm-diff
 
+# Install AWS CLI 2.0
+RUN cd /tmp \
+  && curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+  && unzip awscliv2.zip \
+  && ./aws/install \
+  && rm -Rf ./aws* \
+  && aws --version
+
 RUN apk del --no-cache openssl curl git
 
 COPY entrypoint.sh /entrypoint.sh
