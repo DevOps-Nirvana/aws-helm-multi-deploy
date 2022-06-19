@@ -1,5 +1,7 @@
 # Kubernetes Helm Multi-Deploy
 
+> :warning: **This action's docker image is built at runtime.** Building takes ~1min in tests. For a pre-built version [see here](https://github.com/DevOps-Nirvana/aws-helm-multi-deploy-prebuilt).
+
 This GitHub Action will deploy all Helm chart folders inside a 'deployment' folder in your repository root. Useful for deploying multiple services that are in separate charts. For example:
 
 ```
