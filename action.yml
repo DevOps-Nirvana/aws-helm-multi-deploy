@@ -1,4 +1,4 @@
-name: 'Kubernetes Helm Multi-Deploy'
+name: 'Kubernetes Helm Multi-Deploy - Pre-Built Docker Image'
 description: "Deploys all helm chart folders inside a 'deployment' folder in the project root."
 icon: play
 color: green
@@ -29,7 +29,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: docker://devopsnirvana/aws-helm-multi-deploy
   env:
     CLUSTER_NAME: ${{ inputs.cluster-name }}
     AWS_REGION: ${{ inputs.aws-region }}
